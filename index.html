@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Presidence Events - Livre d'Or Vidéo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+background:#000;
+color:white;
+font-family:Arial;
+text-align:center;
+margin:0;
+padding:0;
+}
+
+.logo{
+font-size:40px;
+margin-top:60px;
+color:#4da6ff;
+}
+
+button{
+padding:20px;
+font-size:20px;
+margin-top:40px;
+background:#4da6ff;
+color:white;
+border:none;
+border-radius:10px;
+}
+
+video{
+margin-top:20px;
+width:90%;
+max-width:500px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="logo">
+Presidence Events
+</div>
+
+<h2>Livre d'Or Vidéo</h2>
+
+<video id="preview" autoplay muted></video>
+
+<br>
+
+<button onclick="startRecording()">Démarrer message (60s)</button>
+
+<script>
+
+let mediaRecorder;
+let chunks=[];
+
+async function startRecording(){
+
+const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+document.getElementById("preview").srcObject = stream;
+
+mediaRecorder = new MediaRecorder(stream);
+
+mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
+mediaRecorder.onstop = e =>{
+
+const blob = new Blob(chunks,{type:"video/mp4"});
+const url = URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+a.href=url;
+a.download="message-invite.mp4";
+a.click();
+
+chunks=[];
+};
+
+mediaRecorder.start();
+
+setTimeout(()=>{
+mediaRecorder.stop();
+},60000);
+
+}
+
+</script>
+
+</body>
+</html>
